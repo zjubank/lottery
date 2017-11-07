@@ -82,6 +82,9 @@
         });
         localStorage.setItem("str", JSON.stringify(str))
 
+        if(drawNumber > str.length) {
+          drawNumber = str.length
+        }
         var c = confirm("从 "+str.length+" 项中抽选 "+drawNumber+" 次，确认吗？");
         if( c == false ) {
           return ;
