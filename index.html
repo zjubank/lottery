@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-cn">
+  <head>
+    <title>在线抽奖系统</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<!-- Custom styles for this template -->
+    <link href="starter.css" rel="stylesheet">
+  </head>
+  <body>
+
+  	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      	<a class="navbar-brand" href="index.html">抽奖首页</a>
+  	</nav>
+    <main role="main" class="container">
+
+      	<div class="starter-template">
+        	<h1>欢迎使用自动抽奖系统</h1>
+        	<p class="lead" style="display:none">一发十连改变命运<br>脱非入欧就在今日</p>
+      	</div>
+
+        <form>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1">待抽选项</label>
+                  <textarea class="form-control" id="inputTextarea" rows="20" placeholder="粘贴待抽选项到此处" aria-label="粘贴待抽选项到此处"></textarea>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="exampleFormControlSelect2">抽选结果</label>
+                  <textarea multiple class="form-control" id="outputTextarea" rows="20" placeholder="抽选结果将展示在此处" aria-label="抽选结果将展示在此处"></textarea>
+
+              </div>
+            </div>
+          </div>
+        </form>
+        <textarea class="js-copytextarea" style="display:none" id="exportTextarea"></textarea>
+
+        <div class="starter-template">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="input-group">
+
+              <input type="text" class="form-control" placeholder="抽选次数" aria-label="抽选次数" id="drawNumberText">
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="button" onclick="multiDraw()">立即抽选！</button>
+              </span>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-primary" onclick="singleDraw()">再抽一发</button>
+          </div>
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-secondary" onclick="clearTextarea()">清空数据</button>
+          </div>
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-success" onclick="exportResult()">复制结果</button>
+          </div>
+          </div>
+        </div>
+
+    </main>
+
+    <!-- Optional JavaScript -->
+    <script>
+      function randNum(max) {
+        return parseInt(Math.random()*max,10);
+      }
+
+      function multiDraw(){
+        localStorage.clear();
+        var drawNumber = document.getElementById("drawNumberText").value;
+        var drawList = document.getElementById("inputTextarea").value;
+        var str = new Array();
+        drawList.trim().split('\n').forEach(function(v, i) {
+          str[i] = v
+        });
+        localStorage.setItem("str", JSON.stringify(str))
+
+        var c = confirm("从 "+str.length+" 项中抽选 "+drawNumber+" 次，确认吗？");
+        if( c == false ) {
+          return ;
+        }
+        else {
+          var watingStr = str;
+          var outStr = new Array();
+          for(var i = 0; i<drawNumber; i++) {
+            var n = randNum(watingStr.length);
+            outStr[i] = watingStr[n];
+            watingStr.splice(n, 1);
+          }
+          var outList = "";
+          for(var i = 0; i<outStr.length; i++) {
+            outList += outStr[i]+"\n";
+          }
+          document.getElementById("outputTextarea").innerHTML = outList;
+
+          localStorage.setItem("watingStr", JSON.stringify(watingStr));
+          localStorage.setItem("outStr", JSON.stringify(outStr));
+          localStorage.outList = outList;
+        }
+      }
+      function singleDraw(){
+        var watingStr = JSON.parse(localStorage.getItem("watingStr"));
+        var outStr = JSON.parse(localStorage.getItem("outStr"));
+        var outList = localStorage.outList;
+
+        var c = confirm("从剩余 "+watingStr.length+" 项中再抽选 1 次，确认吗？");
+        if( c == false ) {
+          return ;
+        }
+        else {
+          var n = randNum(watingStr.length);
+          outStr.push(watingStr[n]);
+          watingStr.splice(n, 1);
+          outList += outStr[outStr.length-1]+"\n";
+
+          document.getElementById("outputTextarea").innerHTML = outList;
+
+          localStorage.setItem("watingStr", JSON.stringify(watingStr));
+          localStorage.setItem("outStr", JSON.stringify(outStr));
+          localStorage.outList = outList;
+        }
+      }
+      function clearTextarea() {
+        document.getElementById("inputTextarea").value = "";
+        document.getElementById("outputTextarea").value = "";
+        document.getElementById("drawNumberText").value = "";
+        localStorage.claer();
+      }
+      function exportResult(){
+        var str = JSON.parse(localStorage.getItem("str"));
+        var outStr = JSON.parse(localStorage.getItem("outStr"));
+        var exportList = "";
+        for(var i = 0; i < str.length; i++) {
+          var find = outStr.indexOf(str[i]);
+          if(find >= 0) {
+            exportList += str[i] + "\t1" + "\n";
+          }
+          else {
+            exportList += str[i] + "\t0" + "\n";
+          }
+        }
+        document.getElementById("exportTextarea").style.display=""
+        document.getElementById("exportTextarea").innerHTML = exportList;
+
+        var copyTextarea = document.querySelector('.js-copytextarea');
+        copyTextarea.select();
+        try {
+          var successful = document.execCommand('copy');
+          document.getElementById("exportTextarea").style.display="none"
+          var msg = successful ? '成功' : '失败，请检查浏览器权限设置';
+          alert('完整结果拷贝到剪贴板' + msg);
+        } catch (err) {
+          console.log('unable to copy');
+        }
+      }
+    </script>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  </body>
+</html>
