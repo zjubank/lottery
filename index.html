@@ -53,7 +53,7 @@
             </div>
           </div>
           <div class="col-lg-3">
-            <button type="button" class="btn btn-primary" onclick="singleDraw()">再抽一发</button>
+            <button type="button" class="btn btn-primary" disabled="true" onclick="singleDraw()" id="singleDrawBtn">再抽一发</button>
           </div>
           <div class="col-lg-3">
             <button type="button" class="btn btn-secondary" onclick="clearTextarea()">清空数据</button>
@@ -102,6 +102,7 @@
             outList += outStr[i]+"\n";
           }
           document.getElementById("outputTextarea").innerHTML = outList;
+          document.getElementById("singleDrawBtn").removeAttribute("disabled");
 
           localStorage.setItem("watingStr", JSON.stringify(watingStr));
           localStorage.setItem("outStr", JSON.stringify(outStr));
@@ -134,7 +135,8 @@
         document.getElementById("inputTextarea").value = "";
         document.getElementById("outputTextarea").value = "";
         document.getElementById("drawNumberText").value = "";
-        localStorage.claer();
+        document.getElementById("singleDrawBtn").setAttribute("disabled",true);
+        localStorage.clear();
       }
       function exportResult(){
         var str = JSON.parse(localStorage.getItem("str"));
