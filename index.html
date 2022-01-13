@@ -104,6 +104,7 @@
           }
           document.getElementById("outputTextarea").innerHTML = outList;
           document.getElementById("singleDrawBtn").removeAttribute("disabled");
+          document.getElementById("inputTextarea").value = watingStr;
 
           localStorage.setItem("watingStr", JSON.stringify(watingStr));
           localStorage.setItem("outStr", JSON.stringify(outStr));
