@@ -73,7 +73,7 @@
         return parseInt(Math.random()*max,10);
       }
 
-      function multiDraw(){
+      function multiDraw() {
         localStorage.clear();
         var drawNumber = document.getElementById("drawNumberText").value;
         var drawList = document.getElementById("inputTextarea").value;
@@ -110,7 +110,8 @@
           localStorage.outList = outList;
         }
       }
-      function singleDraw(){
+
+      function singleDraw() {
         var watingStr = JSON.parse(localStorage.getItem("watingStr"));
         var outStr = JSON.parse(localStorage.getItem("outStr"));
         var outList = localStorage.outList;
@@ -132,6 +133,7 @@
           localStorage.outList = outList;
         }
       }
+
       function clearTextarea() {
         document.getElementById("inputTextarea").value = "";
         document.getElementById("outputTextarea").value = "";
@@ -140,7 +142,8 @@
         localStorage.clear();
 		    location.reload();
       }
-      function exportResult(){
+
+      function exportResult() {
         var str = JSON.parse(localStorage.getItem("str"));
         var outStr = JSON.parse(localStorage.getItem("outStr"));
         var exportList = "";
