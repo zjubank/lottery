@@ -128,6 +128,7 @@
           outList += outStr[outStr.length-1]+"\n";
 
           document.getElementById("outputTextarea").innerHTML = outList;
+          document.getElementById("inputTextarea").value = watingStr.join('\n');
 
           localStorage.setItem("watingStr", JSON.stringify(watingStr));
           localStorage.setItem("outStr", JSON.stringify(outStr));
